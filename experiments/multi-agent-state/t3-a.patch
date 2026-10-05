@@ -1,0 +1,7 @@
+diff --git a/counter.txt b/counter.txt
+index 0a979d4..85ff5e8 100644
+--- a/counter.txt
++++ b/counter.txt
+@@ -1 +1 @@
+-value = 1
++value = 2

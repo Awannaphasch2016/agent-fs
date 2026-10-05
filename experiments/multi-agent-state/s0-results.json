@@ -1,0 +1,254 @@
+{
+  "stack": "S0 Dagger Changesets",
+  "dagger_cli": "v0.21.10",
+  "sdk": "dagger-io==0.21.10",
+  "image": "docker.io/library/alpine:3.20 imported from /tmp/alpine-oci-plat.tar",
+  "host": "single linux x86_64 VM, no second physical host",
+  "tests": {
+    "T1": {
+      "status": "fail",
+      "verified": "experiment",
+      "ms": 14.1,
+      "final": "value = 3",
+      "silent_lost_update": true,
+      "isolation": "none \u2014 both processes share the container filesystem",
+      "note": "S0 does not isolate two agents inside one writable container. The architecture puts each agent in its own container and merges Changesets."
+    },
+    "T2": {
+      "status": "pass",
+      "verified": "experiment",
+      "ms": 271.7,
+      "canonical_during_isolated_edits": "value = 1\n",
+      "agent_a_sees": "value = 2\n",
+      "agent_b_sees": "value = 3\n",
+      "agents_isolated": true,
+      "default_strategy_rejects": true,
+      "strategies": {
+        "FAIL": {
+          "ok": false,
+          "strategy": "FAIL",
+          "ms": 61.4,
+          "error": "git [merge --no-edit --no-commit theirs]: exit status 1: Auto-merging counter.txt\nCONFLICT (content): Merge conflict in counter.txt\nAutomatic merge failed; fix conflicts and then commit the result."
+        },
+        "FAIL_EARLY": {
+          "ok": false,
+          "strategy": "FAIL_EARLY",
+          "ms": 7.7,
+          "error": "conflict between changesets at path \"counter.txt\": path modified in both changesets"
+        },
+        "LEAVE_CONFLICT_MARKERS": {
+          "ok": true,
+          "strategy": "LEAVE_CONFLICT_MARKERS",
+          "ms": 34.2,
+          "sample": "<<<<<<< HEAD\nvalue = 2\n=======\nvalue = 3\n>>>>>>> theirs\n",
+          "diff_stats": [
+            {
+              "path": "counter.txt",
+              "kind": "MODIFIED",
+              "added_lines": 5,
+              "removed_lines": 1
+            }
+          ],
+          "patch_bytes": 191,
+          "base_unchanged_check": "value = 1\n"
+        },
+        "PREFER_OURS": {
+          "ok": true,
+          "strategy": "PREFER_OURS",
+          "ms": 36.3,
+          "sample": "value = 2\n",
+          "diff_stats": [
+            {
+              "path": "counter.txt",
+              "kind": "MODIFIED",
+              "added_lines": 1,
+              "removed_lines": 1
+            }
+          ],
+          "patch_bytes": 139,
+          "base_unchanged_check": "value = 1\n"
+        },
+        "PREFER_THEIRS": {
+          "ok": true,
+          "strategy": "PREFER_THEIRS",
+          "ms": 45.4,
+          "sample": "value = 3\n",
+          "diff_stats": [
+            {
+              "path": "counter.txt",
+              "kind": "MODIFIED",
+              "added_lines": 1,
+              "removed_lines": 1
+            }
+          ],
+          "patch_bytes": 139,
+          "base_unchanged_check": "value = 1\n"
+        }
+      }
+    },
+    "T3": {
+      "status": "pass",
+      "verified": "experiment",
+      "s3_or_r2": "unsupported \u2014 no bucket credentials; not required for the isolated model",
+      "ms": 123.6,
+      "patch_a_bytes": 139,
+      "patch_b_bytes": 139,
+      "reapply_then_merge": {
+        "ok": false,
+        "strategy": "FAIL",
+        "ms": 65.8,
+        "error": "git [merge --no-edit --no-commit theirs]: exit status 1: Auto-merging counter.txt\nCONFLICT (content): Merge conflict in counter.txt\nAutomatic merge failed; fix conflicts and then commit the result."
+      }
+    },
+    "T4": {
+      "status": "partial",
+      "verified": "experiment",
+      "physical_hosts": "not run \u2014 this environment is one VM",
+      "what_was_verified": "two containers cannot read each other's files; the only value that crosses the boundary is the Changeset, and the merge still detects the conflict",
+      "ms": 106.8,
+      "agent_a_cannot_read_agent_b_file": true,
+      "merge": {
+        "ok": false,
+        "strategy": "FAIL",
+        "ms": 84.1,
+        "error": "git [merge --no-edit --no-commit theirs]: exit status 1: Auto-merging counter.txt\nCONFLICT (content): Merge conflict in counter.txt\nAutomatic merge failed; fix conflicts and then commit the result."
+      },
+      "shared_kernel_locks": "none used"
+    },
+    "T5": {
+      "status": "pass",
+      "verified": "experiment",
+      "ms": 215.3,
+      "v2_after_b": "value = 2\n",
+      "stale_same_line_rejected": {
+        "ok": false,
+        "strategy": "FAIL",
+        "ms": 79.3,
+        "error": "git [merge --no-edit --no-commit theirs]: exit status 1: Auto-merging counter.txt\nCONFLICT (content): Merge conflict in counter.txt\nAutomatic merge failed; fix conflicts and then commit the result."
+      },
+      "stale_distant_lines": {
+        "ok": true,
+        "both_edits_kept": true,
+        "head": "line 1 FROM_A\nline 2 base",
+        "tail": "line 29 base\nline 30 FROM_B",
+        "error": null
+      }
+    },
+    "T6": {
+      "status": "pass",
+      "verified": "experiment",
+      "ms": 122.3,
+      "failed_exec_published": false,
+      "publish_error": "exit code: 1 [traceparent:414c70b5a4c92d7fc52201df283028ed-4a0ef5e026a583cd]",
+      "canonical_after_crash": "value = 1\n",
+      "agent_b_promoted": "value = from B\n",
+      "locks": "no lock was held; nothing to reclaim",
+      "machine_loss": "not simulated \u2014 there is no remote lock or mount"
+    },
+    "T7": {
+      "status": "pass",
+      "verified": "experiment",
+      "ms": 387.9,
+      "disjoint_files": {
+        "merge_ok": true,
+        "a_txt": "from A\n",
+        "b_txt": "from B\n",
+        "error": null
+      },
+      "distant_lines": {
+        "both_edits_kept": true,
+        "head": "line 1 FROM_A",
+        "tail": "line 30 FROM_B",
+        "error": null
+      },
+      "adjacent_lines_conflict": {
+        "ok": false,
+        "error": "git [merge --no-edit --no-commit theirs]: exit status 1: Auto-merging notes.txt\nCONFLICT (content): Merge conflict in notes.txt\nAutomatic merge failed; fix conflicts and then commit the result."
+      },
+      "same_line_conflict": {
+        "ok": false,
+        "error": "git [merge --no-edit --no-commit theirs]: exit status 1: Auto-merging notes.txt\nCONFLICT (content): Merge conflict in notes.txt\nAutomatic merge failed; fix conflicts and then commit the result."
+      },
+      "granularity": "git hunk, not semantic and not a pure line. Different files merge. Lines far enough apart to form separate hunks merge. Adjacent lines conflict because the default 3-line hunk context overlaps. The same line conflicts."
+    },
+    "T8": {
+      "status": "pass",
+      "verified": "experiment",
+      "ms": 144.1,
+      "canonical_during": "value = 1\n",
+      "promoted": {
+        "counter.txt": "value = 2\n",
+        "spec.txt": "spec from A\n",
+        "notes.txt": "notes from B\n"
+      },
+      "rollback_base_still": "value = 1\n",
+      "patch_a_head": "diff --git a/counter.txt b/counter.txt\nindex 0a979d4..85ff5e8 100644\n--- a/counter.txt\n+++ b/counter.txt\n@@ -1 +1 @@\n-value = 1\n+value = 2\ndiff --git b/spec.txt b/spec.txt\nnew file mode 100644\nindex 0000000..9fd0a11\n--- /dev/null\n+++ b/spec.txt",
+      "diff_stats": [
+        {
+          "path": "counter.txt",
+          "kind": "MODIFIED",
+          "added_lines": 1,
+          "removed_lines": 1
+        },
+        {
+          "path": "notes.txt",
+          "kind": "ADDED",
+          "added_lines": 1,
+          "removed_lines": 0
+        },
+        {
+          "path": "spec.txt",
+          "kind": "ADDED",
+          "added_lines": 1,
+          "removed_lines": 0
+        }
+      ],
+      "conflicting_promotion_rejected": {
+        "ok": false,
+        "strategy": "FAIL",
+        "ms": 62.6,
+        "error": "git [merge --no-edit --no-commit theirs]: exit status 1: Auto-merging counter.txt\nCONFLICT (content): Merge conflict in counter.txt\nAutomatic merge failed; fix conflicts and then commit the result."
+      },
+      "canonical_after_rejected_promotion": "value = 1\n",
+      "provenance": "patch text and diff stats; no agent_id or run_id field on a Changeset"
+    },
+    "T9": {
+      "status": "pass",
+      "verified": "experiment",
+      "ms": 398.2,
+      "independent_octopus": {
+        "ok": true,
+        "ms": 77.2,
+        "files": {
+          "a.txt": "a1\n",
+          "b.txt": "b1\n",
+          "c.txt": "c1\n",
+          "d.txt": "d1\n"
+        }
+      },
+      "octopus_with_one_conflicting_pair": {
+        "ok": false,
+        "error": "git [merge --no-edit --no-commit branch_0 branch_1 branch_2]: exit status 1: Trying simple merge with branch_0\nTrying simple merge with branch_1\nTrying simple merge with branch_2\nSimple merge did not work, trying automatic merge.\nAuto-merging shared.txt\nERROR: content conflict in shared.txt\nfatal: merge program failed\nAutomatic merge failed; fix conflicts and then commit the result."
+      },
+      "independent_agents_preserved_after_dropping_conflict": {
+        "ok": true,
+        "a.txt": "a1\n",
+        "b.txt": "b1\n",
+        "shared.txt": "from C\n",
+        "d.txt": "d0\n"
+      },
+      "granularity": "git octopus merge of Changesets; file-disjoint edits combine, a file touched by two heads fails the whole octopus"
+    }
+  },
+  "summary": {
+    "T1": "fail",
+    "T2": "pass",
+    "T3": "pass",
+    "T4": "partial",
+    "T5": "pass",
+    "T6": "pass",
+    "T7": "pass",
+    "T8": "pass",
+    "T9": "pass"
+  }
+}

@@ -1,0 +1,40 @@
+30  : Changeset.withChangeset ERROR [0.0s]
+30  : ! git [merge --no-edit --no-commit theirs]: exit status 1: Auto-merging counter.txt
+CONFLICT (content): Merge conflict in counter.txt
+Automatic merge failed; fix conflicts and then commit the result.
+31  : Changeset.withChangeset ERROR [0.0s]
+31  : ! conflict between changesets at path "counter.txt": path modified in both changesets
+32  : ┆ onConflict: LEAVE_CONFLICT_MARKERS
+33  : ┆ ┆ onConflict: LEAVE_CONFLICT_MARKERS
+73  : Changeset.withChangeset ERROR [0.1s]
+73  : ! git [merge --no-edit --no-commit theirs]: exit status 1: Auto-merging counter.txt
+CONFLICT (content): Merge conflict in counter.txt
+Automatic merge failed; fix conflicts and then commit the result.
+76  : Directory.file ERROR [0.0s]
+81  : Changeset.withChangeset ERROR [0.1s]
+81  : ! git [merge --no-edit --no-commit theirs]: exit status 1: Auto-merging counter.txt
+CONFLICT (content): Merge conflict in counter.txt
+Automatic merge failed; fix conflicts and then commit the result.
+88  : Changeset.withChangeset ERROR [0.1s]
+88  : ! git [merge --no-edit --no-commit theirs]: exit status 1: Auto-merging counter.txt
+CONFLICT (content): Merge conflict in counter.txt
+Automatic merge failed; fix conflicts and then commit the result.
+111 : Container.withExec ERROR [0.1s]
+113 : Directory.file ERROR [0.1s]
+135 : Directory.file ERROR [0.0s]
+164 : Changeset.withChangeset ERROR [0.1s]
+164 : ! git [merge --no-edit --no-commit theirs]: exit status 1: Auto-merging notes.txt
+CONFLICT (content): Merge conflict in notes.txt
+Automatic merge failed; fix conflicts and then commit the result.
+168 : Changeset.withChangeset ERROR [0.1s]
+168 : ! git [merge --no-edit --no-commit theirs]: exit status 1: Auto-merging notes.txt
+CONFLICT (content): Merge conflict in notes.txt
+Automatic merge failed; fix conflicts and then commit the result.
+185 : Changeset.withChangeset ERROR [0.1s]
+185 : ! git [merge --no-edit --no-commit theirs]: exit status 1: Auto-merging counter.txt
+CONFLICT (content): Merge conflict in counter.txt
+Automatic merge failed; fix conflicts and then commit the result.
+234 : Changeset.withChangesets ERROR [0.2s]
+234 : ! git [merge --no-edit --no-commit branch_0 branch_1 branch_2]: exit status 1: Trying simple merge with branch_0
+ERROR: content conflict in shared.txt
+Automatic merge failed; fix conflicts and then commit the result.
